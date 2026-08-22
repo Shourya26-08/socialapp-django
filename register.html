@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign up — Dispatch</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-title">Disp<span>atch</span></div>
+    <nav class="masthead-nav" id="nav-slot"></nav>
+  </div>
+</header>
+
+<main>
+  <div class="auth-wrap">
+    <h1 class="auth-title">Join <span>Dispatch</span></h1>
+    <p class="auth-subtitle">Create an account to start posting.</p>
+
+    <div id="form-error"></div>
+
+    <form id="register-form">
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" autocomplete="username" required minlength="2" maxlength="30" />
+      </div>
+      <div class="field">
+        <label for="email">Email (optional)</label>
+        <input type="email" id="email" autocomplete="email" />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="new-password" required minlength="8" />
+      </div>
+      <div class="field">
+        <label for="bio">Short bio (optional)</label>
+        <input type="text" id="bio" maxlength="280" placeholder="What should people know about you?" />
+      </div>
+      <button type="submit" class="btn btn-signal" id="submit-btn">Create account</button>
+    </form>
+
+    <p class="auth-switch">Already have an account? <a href="login.html">Log in</a></p>
+  </div>
+</main>
+
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script>
+  renderNav('register');
+  if (Api.isLoggedIn()) window.location.href = 'index.html';
+
+  const form = document.getElementById('register-form');
+  const errorSlot = document.getElementById('form-error');
+  const submitBtn = document.getElementById('submit-btn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorSlot.innerHTML = '';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Creating account…';
+    try {
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const bio = document.getElementById('bio').value.trim();
+      const data = await Api.register(username, email, password, bio);
+      Api.setToken(data.token);
+      Api.setUsername(data.username);
+      window.location.href = 'index.html';
+    } catch (err) {
+      showError(errorSlot, err);
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Create account';
+    }
+  });
+</script>
+</body>
+</html>
