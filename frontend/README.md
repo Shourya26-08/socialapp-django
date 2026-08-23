@@ -1,0 +1,1 @@
+Frontend client for Dispatch. Serve this folder with `python -m http.server 5500` while the Django API runs on port 8000.
